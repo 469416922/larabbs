@@ -33,7 +33,8 @@ class ImageUploadHandler
         $file->move($upload_path, $filename);
 
         return [
-            'path' => config('app.url') . "/$folder_name/$filename"
+            // 'path' => config('app.url') . "/$folder_name/$filename"
+            'path' =>  "/$folder_name/$filename"//不要绝对路径
         ];
     }
 }
