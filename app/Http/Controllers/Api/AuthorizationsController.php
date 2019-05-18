@@ -11,8 +11,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use League\OAuth2\Server\AuthorizationServer;
 use Zend\Diactoros\Response as Psr7Response;
 use League\OAuth2\Server\Exception\OAuthServerException;
+use App\Traits\PassportToken;
 class AuthorizationsController extends Controller
 {
+    use PassportToken;
     public function socialStore($type, SocialAuthorizationRequest $request)
     {
         if (!in_array($type, ['weixin'])) {
@@ -61,7 +63,9 @@ class AuthorizationsController extends Controller
                 break;
         }
 
-        return $this->response->array(['token' => $user->id]);
+        // return $this->response->array(['token' => $user->id]);
+        $result = $this->getBearerTokenByUser($user, '1', false);
+        return $this->response->array($result)->setStatusCode(201);
     }
     // public function store(AuthorizationRequest $request)
     // {
