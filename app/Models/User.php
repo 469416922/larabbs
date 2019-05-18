@@ -6,6 +6,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Contracts\Auth\MustVerifyEmail as MustVerifyEmailContract;
 use Auth;
 use Spatie\Permission\Traits\HasRoles;
+use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable implements MustVerifyEmailContract
 {
     use HasRoles;
@@ -15,6 +16,7 @@ class User extends Authenticatable implements MustVerifyEmailContract
     use Notifiable {
         notify as protected laravelNotify;
     }
+    use HasApiTokens;
     public function notify($instance)
     {
         // 如果要通知的人是当前用户，就不必通知了！
@@ -69,5 +71,13 @@ class User extends Authenticatable implements MustVerifyEmailContract
             $path = config('app.url') . "/uploads/images/avatars/$path";
         }
         $this->attributes['avatar'] = $path;
+    }
+    public function findForPassport($username)
+    {
+        filter_var($username, FILTER_VALIDATE_EMAIL) ?
+          $credentials['email'] = $username :
+          $credentials['phone'] = $username;
+
+        return self::where($credentials)->first();
     }
 }
